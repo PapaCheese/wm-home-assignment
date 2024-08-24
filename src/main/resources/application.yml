@@ -1,0 +1,12 @@
+micronaut:
+  application:
+    name: micronautguide
+---
+#tag::db[]
+db:
+  name: 'guyd'
+  collection: 'blogpost'
+
+#end::db[]
+mongodb:
+  uri: ${MONGODB_URI}
