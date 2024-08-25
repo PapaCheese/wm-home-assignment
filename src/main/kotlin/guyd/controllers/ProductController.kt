@@ -19,7 +19,22 @@ open class ProductController(private val productService: ProductRepository) {
 
     @Get 
     @Produces(MediaType.APPLICATION_JSON) 
-    fun getProductsIds(): List<IdsResponse> = productService.getIds()
+    fun getProductsIds(limit: Int?, offset: Int?): List<IdsResponse> {
+        val _limit = if (limit == null) defaultPageSize else limit
+        val _offset = if (offset == null) 0 else offset 
+
+        return productService.getIds(_limit, _offset)
+    }
+    
+
+    @Get("/search")
+    @Produces(MediaType.APPLICATION_JSON) 
+    fun getProductsFiltered(limit: Int?, offset: Int?, nameFilter: String?, priceFilter: String?, brandFilter: String?, categoryFilter: String?): List<Product>{
+        val _limit = if (limit == null) defaultPageSize else limit
+        val _offset = if (offset == null) 0 else offset 
+
+        return  productService.getFiltered(_limit, _offset, nameFilter, priceFilter, brandFilter, categoryFilter)
+    }
     
 
     @Get("/{id}")
@@ -35,6 +50,12 @@ open class ProductController(private val productService: ProductRepository) {
     @Put 
     @Status(CREATED) 
     open fun updateProductById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?) = productService.updateById(id, newName, newPrice, newBrand, newCategory)
+
+
+    // // in case i know product comes with all the params (type safe) from the frontend 
+    // @Put 
+    // @Status(CREATED) 
+    // open fun updateProductById(id: String, @Valid product: Product) = productService.updateById(id, product)
 
 
     @Delete 
