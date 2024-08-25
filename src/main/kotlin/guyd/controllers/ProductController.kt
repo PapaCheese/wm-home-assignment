@@ -5,6 +5,8 @@ import io.micronaut.http.HttpStatus.CREATED
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.Put
+import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Status
 import io.micronaut.http.annotation.Produces
 import io.micronaut.scheduling.TaskExecutors
@@ -27,5 +29,19 @@ open class ProductController(private val productService: ProductRepository) {
 
     @Post 
     @Status(CREATED) 
-    open fun save(@Valid product: Product) = productService.save(product)
+    open fun saveProduct(@Valid product: Product) = productService.save(product)
+
+
+    @Put 
+    @Status(CREATED) 
+    open fun updateProductById(id: String, @Valid product: Product) = productService.updateById(id, product)
+
+
+    @Delete 
+    @Status(CREATED) 
+    open fun deleteProductById(id: String) = productService.deleteById(id)
+
+
+
+
 }

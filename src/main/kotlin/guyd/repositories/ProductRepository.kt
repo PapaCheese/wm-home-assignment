@@ -1,6 +1,7 @@
 package guyd
 
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Updates
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Projections.fields
@@ -44,12 +45,13 @@ open class MongoDbProductRepository(
         }
 
         override fun updateById(id: String, @Valid product: Product) {
-            collection.updateOne(Document("_id", ObjectId(id)), product)
+            collection.replaceOne(eq("_id", ObjectId(id)), product)
         }
 
         override fun deleteById(id: String) {
-            collection.deleteOne(Document("_id", ObjectId(id)))
+            collection.deleteOne(eq("_id", ObjectId(id)))
         }
+        
 
         private val collection: MongoCollection<Product>
             get() = mongoClient.getDatabase(mongoConf.name)
