@@ -34,14 +34,11 @@ open class ProductController(private val productService: ProductRepository) {
 
     @Put 
     @Status(CREATED) 
-    open fun updateProductById(id: String, @Valid product: Product) = productService.updateById(id, product)
+    open fun updateProductById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?) = productService.updateById(id, newName, newPrice, newBrand, newCategory)
 
 
     @Delete 
     @Status(CREATED) 
     open fun deleteProductById(id: String) = productService.deleteById(id)
-
-
-
 
 }
