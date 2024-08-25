@@ -12,19 +12,20 @@ import io.micronaut.scheduling.annotation.ExecuteOn
 import jakarta.validation.Valid
 
 @Controller("/product") 
-@ExecuteOn(TaskExecutors.BLOCKING) 
+@ExecuteOn(TaskExecutors.BLOCKING)
 open class ProductController(private val productService: ProductRepository) { 
 
     @Get 
-    fun listProductIds(): List<Product> = productService.listProductIds()
+    @Produces(MediaType.APPLICATION_JSON) 
+    fun getProductsIds(): List<IdsResponse> = productService.getIds()
+    
 
     @Get("/{id}")
     @Produces(MediaType.APPLICATION_JSON) 
-    fun get(id: String): List<Product> = productService.findById(id)
+    fun getProductById(id: String): List<Product> = productService.getById(id)
 
 
     @Post 
     @Status(CREATED) 
-    open fun save(@Valid product: Product) = 
-        productService.save(product)
+    open fun save(@Valid product: Product) = productService.save(product)
 }

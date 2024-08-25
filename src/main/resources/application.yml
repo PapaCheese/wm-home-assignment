@@ -1,6 +1,9 @@
 micronaut:
   application:
-    name: micronautguide
+    name: guy-wm-ha
+  serialization:
+    bson:
+      enabled: true
 ---
 #tag::db[]
 db:

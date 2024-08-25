@@ -32,6 +32,13 @@ dependencies {
     testImplementation("io.micronaut:micronaut-http-client")
 }
 
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("io.micronaut:micronaut-jackson-databind"))
+        .using(module("io.micronaut.serde:micronaut-serde-jackson:1.2.0"))
+    }
+}
+
 
 application {
     mainClass = "guyd.ApplicationKt"
