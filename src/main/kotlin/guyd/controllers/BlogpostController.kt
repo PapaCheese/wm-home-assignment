@@ -29,11 +29,11 @@ open class BlogpostController(private val blogpostService: BlogpostRepository) {
 
     @Get("/search")
     @Produces(MediaType.APPLICATION_JSON) 
-    fun getBlogpostsFiltered(limit: Int?, offset: Int?, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost>{
+    fun getBlogpostsFiltered(limit: Int?, offset: Int?, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost>{
         val _limit = if (limit == null) defaultPageSize else limit
         val _offset = if (offset == null) 0 else offset 
 
-        return  blogpostService.getFiltered(_limit, _offset, nameFilter, textFilter, categoryFilter, productFilter)
+        return  blogpostService.getFiltered(_limit, _offset, nameFilter, textFilter, categoryFilter)
     }
     
 
@@ -44,7 +44,9 @@ open class BlogpostController(private val blogpostService: BlogpostRepository) {
 
     @Post 
     @Status(CREATED) 
-    open fun saveBlogpost(@Valid blogpost: Blogpost) = blogpostService.save(blogpost)
+    open fun saveBlogpost(@Valid blogpost: Blogpost): String {
+        return blogpostService.save(blogpost)
+    }
 
 
     @Put 
@@ -58,7 +60,7 @@ open class BlogpostController(private val blogpostService: BlogpostRepository) {
     // open fun updateBlogpostById(id: String, @Valid blogpost: Blogpost) = blogpostService.updateById(id, blogpost)
 
 
-    @Delete 
+    @Delete("/{id}")
     @Status(CREATED) 
     open fun deleteBlogpostById(id: String) = blogpostService.deleteById(id)
 

@@ -29,11 +29,11 @@ open class BlogpostController(private val blogpostService: BlogpostRepository) {
 
     @Get("/search")
     @Produces(MediaType.APPLICATION_JSON) 
-    fun getBlogpostsFiltered(limit: Int?, offset: Int?, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost>{
+    fun getBlogpostsFiltered(limit: Int?, offset: Int?, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost>{
         val _limit = if (limit == null) defaultPageSize else limit
         val _offset = if (offset == null) 0 else offset 
 
-        return  blogpostService.getFiltered(_limit, _offset, nameFilter, textFilter, categoryFilter, productFilter)
+        return  blogpostService.getFiltered(_limit, _offset, nameFilter, textFilter, categoryFilter)
     }
     
 

@@ -16,7 +16,7 @@ import org.bson.Document
 
 interface BlogpostRepository {
     fun getIds(limit: Int, offset: Int): List<IdsResponse>
-    fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost>
+    fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost>
     fun getById(id: String): List<Blogpost>
     fun save(@Valid blogpost: Blogpost)
     fun updateById(id: String, newName: String?, newText: String?, newCategory: Category?, newProducts: List<Product>?)
@@ -43,7 +43,7 @@ open class MongoDbBlogpostRepository(
 
         // returns a list of filtered blogposts
         // dynamic filtering, can hold some, all or none of the filters.
-        override fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost> {
+        override fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost> {
             val filters = mutableListOf<Bson>()
 
             if (!nameFilter.isNullOrEmpty()) {
@@ -54,9 +54,6 @@ open class MongoDbBlogpostRepository(
             }
             if (!categoryFilter.isNullOrEmpty()) {
                 filters.add(Filters.eq("category", categoryFilter))
-            }
-            if (!productFilter.isNullOrEmpty()) {
-                filters.add(Filters.eq("product", productFilter))
             }
         
             val combinedFilter = if (filters.isNotEmpty()) {

@@ -16,7 +16,7 @@ import org.bson.Document
 
 interface BlogpostRepository {
     fun getIds(limit: Int, offset: Int): List<IdsResponse>
-    fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost>
+    fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost>
     fun getById(id: String): List<Blogpost>
     fun save(@Valid blogpost: Blogpost)
     fun updateById(id: String, newName: String?, newText: String?, newCategory: Category?, newProducts: List<Product>?)
@@ -43,7 +43,7 @@ open class MongoDbBlogpostRepository(
 
         // returns a list of filtered blogposts
         // dynamic filtering, can hold some, all or none of the filters.
-        override fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost> {
+        override fun getFiltered(limit: Int, offset: Int, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost> {
             val filters = mutableListOf<Bson>()
 
             if (!nameFilter.isNullOrEmpty()) {
@@ -54,9 +54,6 @@ open class MongoDbBlogpostRepository(
             }
             if (!categoryFilter.isNullOrEmpty()) {
                 filters.add(Filters.eq("category", categoryFilter))
-            }
-            if (!productFilter.isNullOrEmpty()) {
-                filters.add(Filters.eq("product", productFilter))
             }
         
             val combinedFilter = if (filters.isNotEmpty()) {
@@ -79,7 +76,11 @@ open class MongoDbBlogpostRepository(
             }
 
         override fun save(@Valid blogpost: Blogpost) {
-            collection.insertOne(blogpost)
+            val result = collection.insertOne(blogpost)
+            if (result.insertedId != null){
+                return result.insertedId.asObjectId().value.toString()
+            }
+            return ""
         }
 
         // in case i want the update to be dynamic
@@ -102,13 +103,16 @@ open class MongoDbBlogpostRepository(
             if (updates.isNotEmpty()) {
                 val filter = Filters.eq("_id", ObjectId(id))
                 val updateResult = collection.updateOne(filter, Updates.combine(updates))
+                return id
             }
+            return "at least 1 update field is required"
         }
 
         // in case i know blogpost comes with all the params (type safe) from the frontend 
-        override fun updateById(id: String, @Valid blogpost: Blogpost) {
-            collection.replaceOne(Filters.eq("_id", ObjectId(id)), blogpost)
-        }
+        // override fun updateById(id: String, @Valid blogpost: Blogpost) {
+        //     collection.replaceOne(Filters.eq("_id", ObjectId(id)), blogpost)
+        //     returtn id
+        // }
 
         override fun deleteById(id: String) {
             collection.deleteOne(Filters.eq("_id", ObjectId(id)))

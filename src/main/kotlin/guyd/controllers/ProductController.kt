@@ -44,12 +44,14 @@ open class ProductController(private val productService: ProductRepository) {
 
     @Post 
     @Status(CREATED) 
-    open fun saveProduct(@Valid product: Product) = productService.save(product)
+    open fun saveProduct(@Valid product: Product): String {
+        return productService.save(product)
+    }
 
 
     @Put 
     @Status(CREATED) 
-    open fun updateProductById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?) = productService.updateById(id, newName, newPrice, newBrand, newCategory)
+    open fun updateProductById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?): String = productService.updateById(id, newName, newPrice, newBrand, newCategory)
 
 
     // // in case i know product comes with all the params (type safe) from the frontend 
@@ -58,7 +60,7 @@ open class ProductController(private val productService: ProductRepository) {
     // open fun updateProductById(id: String, @Valid product: Product) = productService.updateById(id, product)
 
 
-    @Delete 
+    @Delete("/{id}")
     @Status(CREATED) 
     open fun deleteProductById(id: String) = productService.deleteById(id)
 

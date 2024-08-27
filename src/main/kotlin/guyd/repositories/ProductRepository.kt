@@ -7,6 +7,9 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Projections.fields
 import com.mongodb.client.model.Projections.include
 import com.mongodb.client.model.Projections.computed
+import com.mongodb.client.result.InsertManyResult
+import com.mongodb.client.result.InsertOneResult
+import com.mongodb.client.result.UpdateResult
 import jakarta.inject.Singleton
 import jakarta.validation.Valid
 import org.bson.types.ObjectId
@@ -18,9 +21,9 @@ interface ProductRepository {
     fun getIds(limit: Int, offset: Int): List<IdsResponse>
     fun getFiltered(limit: Int, offset: Int, nameFilter: String?, priceFilter: String?, brandFilter: String?, categoryFilter: String?): List<Product>
     fun getById(id: String): List<Product>
-    fun save(@Valid product: Product)
-    fun updateById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?)
-    fun updateById(id: String, @Valid product: Product)
+    fun save(@Valid product: Product): String
+    fun updateById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?): String
+    // fun updateById(id: String, @Valid product: Product): String
     fun deleteById(id: String)
 }
 
@@ -78,12 +81,16 @@ open class MongoDbProductRepository(
                 .into(ArrayList())
             }
 
-        override fun save(@Valid product: Product) {
-            collection.insertOne(product)
+        override fun save(@Valid product: Product): String {
+            val result = collection.insertOne(product)
+            if (result.insertedId != null){
+                return result.insertedId.asObjectId().value.toString()
+            }
+            return ""
         }
 
         // in case i want the update to be dynamic
-        override fun updateById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?) {
+        override fun updateById(id: String, newName: String?, newPrice: String?, newBrand: String?, newCategory: Category?): String {
             val updates = mutableListOf<Bson>()
         
             if (!newName.isNullOrEmpty()) {
@@ -101,14 +108,17 @@ open class MongoDbProductRepository(
         
             if (updates.isNotEmpty()) {
                 val filter = Filters.eq("_id", ObjectId(id))
-                val updateResult = collection.updateOne(filter, Updates.combine(updates))
+                collection.updateOne(filter, Updates.combine(updates))
+                return id
             }
+            return "at least 1 update field is required"
         }
 
-        // in case i know product comes with all the params (type safe) from the frontend 
-        override fun updateById(id: String, @Valid product: Product) {
-            collection.replaceOne(Filters.eq("_id", ObjectId(id)), product)
-        }
+        // // in case i know product comes with all the params (type safe) from the frontend 
+        // override fun updateById(id: String, @Valid product: Product): String {
+        //     collection.replaceOne(Filters.eq("_id", ObjectId(id)), product).getUpsertedId().asString().getValue()
+        //     returtn id
+        // }
 
         override fun deleteById(id: String) {
             collection.deleteOne(Filters.eq("_id", ObjectId(id)))
