@@ -29,11 +29,11 @@ open class BlogpostController(private val blogpostService: BlogpostRepository) {
 
     @Get("/search")
     @Produces(MediaType.APPLICATION_JSON) 
-    fun getBlogpostsFiltered(limit: Int?, offset: Int?, nameFilter: String?, textFilter: String?, categoryFilter: String?): List<Blogpost>{
+    fun getBlogpostsFiltered(limit: Int?, offset: Int?, nameFilter: String?, textFilter: String?, categoryFilter: String?, productFilter: String?): List<Blogpost>{
         val _limit = if (limit == null) defaultPageSize else limit
         val _offset = if (offset == null) 0 else offset 
 
-        return  blogpostService.getFiltered(_limit, _offset, nameFilter, textFilter, categoryFilter)
+        return  blogpostService.getFiltered(_limit, _offset, nameFilter, textFilter, categoryFilter, productFilter)
     }
     
 
@@ -51,13 +51,13 @@ open class BlogpostController(private val blogpostService: BlogpostRepository) {
 
     @Put 
     @Status(CREATED) 
-    open fun updateBlogpostById(id: String, newName: String?, newText: String?, newCategory: Category?, newProducts: List<Product>?) = blogpostService.updateById(id, newName, newText, newCategory, newProducts)
+    open fun updateBlogpostById(id: String, newName: String?, newText: String?, newCategory: Category?, newProducts: List<Product>?): String = blogpostService.updateById(id, newName, newText, newCategory, newProducts)
 
 
     // // in case i know blogpost comes with all the params (type safe) from the frontend 
     // @Put 
     // @Status(CREATED) 
-    // open fun updateBlogpostById(id: String, @Valid blogpost: Blogpost) = blogpostService.updateById(id, blogpost)
+    // open fun updateBlogpostById(id: String, @Valid blogpost: Blogpost): String = blogpostService.updateById(id, blogpost)
 
 
     @Delete("/{id}")
